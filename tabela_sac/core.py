@@ -23,11 +23,11 @@ class SACCalculator:
         """
         Gera a tabela SAC
         """
-        parcelas = np.array([p for p in range(1, 361)])
-        juros = np.array([self.taxa_juros * (self.valor_financiado - p * self.amortizacao) for p in range(360)])
-        amortizacao = np.array([self.amortizacao for p in range(1, 361)])
+        parcelas = np.array([p for p in range(1, self.prazo+1)])
+        juros = np.array([self.taxa_juros * (self.valor_financiado - p * self.amortizacao) for p in range(self.prazo)])
+        amortizacao = np.array([self.amortizacao for p in range(1, self.prazo+1)])
         valor_da_parcela = juros + amortizacao
-        saldo_devedor = np.array([self.valor_financiado - p * self.amortizacao for p in range(1, 361)])
+        saldo_devedor = np.array([self.valor_financiado - p * self.amortizacao for p in range(1, self.prazo+1)])
         
         return (
             pd.DataFrame({

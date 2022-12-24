@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "tabela-sac"
+  site-url: "https://joaopcnogueira.github.io/tabela-sac"
+  description: "Forma Simples de Gerar uma Tabela SAC"
+  repo-branch: main
+  repo-url: "https://github.com/joaopcnogueira/tabela-sac"

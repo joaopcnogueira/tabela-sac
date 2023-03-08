@@ -147,3 +147,32 @@ tabela
 </table>
 <p>360 rows × 5 columns</p>
 </div>
+
+# CLI Interface
+
+The nbdev cli system uses `fastcore.script` to build command line
+interfaces. For further information, go to
+<https://fastcore.fast.ai/script.html>
+
+``` sh
+$ gerar_tabela_sac --help
+
+usage: gerar_tabela_sac [-h] [--path PATH] valor_financiado prazo taxa_juros
+
+Gera a tabela SAC para o valor financiado, prazo e taxa de juros informados.
+
+positional arguments:
+  valor_financiado  Valor financiado
+  prazo             Prazo em meses
+  taxa_juros        Taxa de juros ao mês (ex: 0.01 para uma taxa de 1% ao mês)
+
+optional arguments:
+  -h, --help        show this help message and exit
+  --path PATH       (default: .)
+```
+
+Usage:
+
+``` sh
+$ gerar_tabela_sac 100000 360 0.01
+```

@@ -20,9 +20,11 @@ def gerar_tabela_sac(valor_financiado:float, # Valor financiado
     sac = SACCalculator(valor_financiado, prazo, taxa_juros)
     tabela = sac.tabela()
 
-    tabela.to_csv(f'{path}/tabela_sac.csv', sep=';', index=False)
-
-    return True
+    try:
+        tabela.to_csv(f'{path}/tabela_sac.csv', sep=';', index=False)
+        return f"Tabela gerada com sucesso! Path: {path}/tabela_sac.csv"
+    except:
+        raise Exception(f"Não foi possível gerar a tabela. Verifique os parâmetros informados.")
 
 # %% ../nbs/02_cli.ipynb 5
 @call_parse

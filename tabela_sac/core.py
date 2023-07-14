@@ -12,11 +12,11 @@ class SACCalculator:
     def __init__(self, 
                  valor_financiado: float,     # Valor financiado
                  prazo: int,                  # Prazo em meses 
-                 taxa_juros: float            # Taxa de juros ao mês
+                 taxa_anual: float            # Taxa de juros anual
     ):
         self.valor_financiado = valor_financiado
         self.prazo = prazo
-        self.taxa_juros = taxa_juros
+        self.taxa_juros = (1 + taxa_anual/100)**(1/12) - 1
         self.amortizacao = self.valor_financiado / self.prazo
 
     def tabela(self):
@@ -32,9 +32,57 @@ class SACCalculator:
         return (
             pd.DataFrame({
                 'Parcela': parcelas,
-                'Juros': juros,
                 'Amortização': amortizacao,
+                'Juros': juros,
                 'Valor da Parcela': valor_da_parcela,
                 'Saldo Devedor': saldo_devedor
             }).round(decimals=2)   
         )
+    
+    def amortizacao_extra_mensal(self, valor_amortizado_extra_mensal: float):
+        
+        amortizacao = self.valor_financiado / self.prazo
+        taxa_mensal = self.taxa_juros
+        
+        # Listas para armazenar os dados da tabela
+        meses_extra = []
+        saldos_devedores_extra = []
+        amortizacoes_extra = []
+        juros_extra = []
+        prestacoes_extra = []
+        amortizacoes_extras = []
+
+        # Saldo devedor inicial é o valor financiado
+        saldo_devedor = self.valor_financiado
+
+        # Cálculo da tabela SAC com amortização extra
+        mes = 0
+        while saldo_devedor >= 0:
+            mes += 1
+            meses_extra.append(mes)
+            saldos_devedores_extra.append(saldo_devedor)
+            amortizacoes_extra.append(amortizacao)
+            juro = saldo_devedor * taxa_mensal
+            juros_extra.append(juro)
+            prestacao = amortizacao + juro
+            prestacoes_extra.append(prestacao)
+            
+            # Abate a amortização extra do saldo devedor
+            saldo_devedor -= (amortizacao + min(valor_amortizado_extra_mensal, saldo_devedor))
+            amortizacoes_extras.append(min(valor_amortizado_extra_mensal, saldo_devedor))
+
+        # Criação da tabela SAC com amortização extra
+        tabela_sac_extra = pd.DataFrame({
+            'Parcela': meses_extra,
+            'Saldo Devedor Inicial': saldos_devedores_extra,
+            'Amortização': amortizacoes_extra,
+            'Amortização Extra': amortizacoes_extras,
+            'Juros': juros_extra,
+            'Valor da Parcela': prestacoes_extra,
+            'Saldo Devedor Final': np.roll(saldos_devedores_extra, -1)
+        })
+
+        # Exclusão da última linha, que contém dados incorretos devido ao deslocamento
+        tabela_sac_amortizada = tabela_sac_extra[:-1]
+
+        return tabela_sac_amortizada
